@@ -1,0 +1,323 @@
+
+<html>
+<head>
+<title>mhacks music</title>
+<link href='http://fonts.googleapis.com/css?family=Raleway:600,400' rel='stylesheet' type='text/css'>
+  <script src="jquery-1.11.1.min.js"></script>
+  <link rel='stylesheet' href="simple.css" ></script>
+  <script src='https://cdn.firebase.com/js/client/1.0.15/firebase.js'></script>
+  <script src="jquery.panelslider.min.js"></script>
+
+</head>
+
+<script type="text/javascript">
+    $(document).ready(function () { $('#wrapper').delay(1000).fadeIn(1500)});
+</script>
+
+
+
+<body>
+<div id="page">
+<div id="wrapper" style="display:none;">
+  <h1><img src="http://mhacks.org/img/mhacks_frame.png" height="57"/>HACKS MUSIC</h1>
+
+
+  
+  <!--
+  canvas will have 5 staff lines
+  11 note or more, 
+
+  every 40px have 20px note in the middle
+
+  2D array 'notes' is the most important. it is what will be used for playing the sounds
+  -->
+  <canvas id="myCanvas" width="800" height="200"></canvas>
+    <script>
+
+    var ref = new Firebase('https://musicmaking.firebaseio.com/');
+    //20 across
+    var heightSize = 15;
+    var widthSize = 50;
+    var notes = new Array(widthSize);
+    
+    for (var i = 0; i < widthSize; i++) {
+        //11 notes vertically
+        notes[i] = new Array(heightSize);
+        for (var j = 0; j < heightSize; j++){
+          notes[i][j] = false;
+        }
+    }
+      
+      ref.once('value', function(snapshot)
+      {
+          var noteRef = snapshot.val();
+          //console.log(JSON.stringify(noteRef));
+          if(noteRef != null)
+          {
+            var noteIds = Object.keys(noteRef.notes);
+            for (var id in noteIds) {
+              var note = noteRef.notes[noteIds[id]];
+              notes[note.x][note.y] = note.exists;
+            }
+          }
+          
+          
+          
+      }, function(errorObject)
+      {
+          console.log('Read failed, error: ' + errorObject);
+      });
+      var newRef = new Firebase('https://musicmaking.firebaseio.com/notes');
+      
+
+    
+    newRef.on('child_added', function(snap) 
+    {
+      var newNote = snap.val();
+      console.log(JSON.stringify(newNote));
+      notes[newNote.x][newNote.y] = newNote.exists;
+      });
+    
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+
+      //for the animation of the current note bar
+
+      window.requestAnimFrame = (function(callback) {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+        function(callback) {
+          window.setTimeout(callback, 1000 / 60);
+        };
+      })();
+
+      function draw(myRectangle, context) {
+        drawstaff();
+        drawnotes();
+        context.beginPath();
+        context.rect(myRectangle.x, myRectangle.y, myRectangle.width, myRectangle.height);
+        
+        context.strokeStyle = 'red';
+        context.stroke();
+      }
+
+      function drawnotes(){
+        for(var i = 0; i < widthSize; i ++){
+          for(var j = 0; j < heightSize; j ++){
+            if (notes[i][j]){
+              //console.log('praise the lord');
+
+              context.beginPath();
+            context.arc(i*20 - 10, j*10 -10, 7.5, 0, 2 * Math.PI, false);
+            context.fillStyle = 'rgba(50, 50, 50, 1)';
+
+            context.fill();
+            //context.lineWidth = 5;
+            context.strokeStyle = '#003300';
+            context.stroke();
+            }
+          }
+        }
+      }
+
+      function drawstaff(){
+        context.beginPath();
+        context.strokeStyle = 'grey';
+        context.moveTo(0, 50);
+        context.lineTo(800, 50);
+        context.stroke();
+
+        context.beginPath();
+        context.strokeStyle = 'grey';
+        context.moveTo(0, 70);
+        context.lineTo(800, 70);
+        context.stroke();
+
+        context.beginPath();
+        context.strokeStyle = 'grey';
+        context.moveTo(0, 90);
+        context.lineTo(800, 90);
+        context.stroke();
+
+        context.beginPath();
+        context.strokeStyle = 'grey';
+        context.moveTo(0, 110);
+        context.lineTo(800, 110);
+        context.stroke();
+
+        context.beginPath();
+        context.strokeStyle = 'grey';
+        context.moveTo(0, 130);
+        context.lineTo(800, 130);
+        context.stroke();
+        
+        //measure lines
+        context.beginPath();
+        context.strokeStyle = 'rgba(5, 50, 50, 0.5)';       
+        context.moveTo(200, 50);
+        context.lineTo(200, 130);
+        context.stroke();
+
+        context.beginPath();
+        context.strokeStyle = 'rgba(5, 50, 50, 0.5)';    
+        context.moveTo(400, 50);
+        context.lineTo(400, 130);
+        context.stroke();
+
+        context.beginPath();
+        context.strokeStyle = 'rgba(5, 50, 50, 0.5)';    
+        context.moveTo(600, 50);
+        context.lineTo(600, 130);
+        context.stroke();
+      } 
+
+      function animate(myline, canvas, context, startTime) {
+        // update
+        var time = (new Date()).getTime() - startTime;
+
+        var linearSpeed = 100;
+        // pixels / second
+        var newX = linearSpeed * time / 1000;
+        /*
+        if(newX >= canvas.width) {
+          myRectangle.x = 0;
+        }
+        */
+        myRectangle.x = newX%800;
+        
+
+
+        // clear
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        draw(myRectangle, context);
+
+        // request new frame
+        requestAnimFrame(function() {
+          animate(myRectangle, canvas, context, startTime);
+        });
+      }
+
+
+      //mouse pos
+      function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      }
+
+      function findnearest(canvas, mousePos) {
+        var nearestx = 0;
+        var nearesty = 0;
+
+        for (; nearesty < canvas.height; nearesty += 10) {
+          if(nearesty > mousePos.y)
+            break;
+        }
+        for (; nearestx < canvas.width; nearestx += 20) {
+          if(nearestx > mousePos.x) {
+            //nearestx -= 30;
+            break;
+          }
+        }
+        var drawX = nearestx/20;
+        var drawY = nearesty/10;
+        notes[drawX][drawY] = !notes[drawX][drawY]; 
+        var notesRef = ref.child("notes");
+        notesRef.push(
+        {
+            x: drawX,
+            y: drawY,
+            exists: notes[drawX][drawY]
+        });
+
+
+      
+      }
+
+      canvas.addEventListener('mousedown', function(evt) {
+        var mousePos = getMousePos(canvas, evt);
+        var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+        console.log(mousePos.x);
+        console.log(mousePos.y);
+        findnearest(canvas, mousePos);
+        //writeMessage(canvas, message);
+        
+  });
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+
+
+      //this is the bar that moves
+      var myRectangle = {
+        x: 0,
+        y: 20,
+        width: 1,
+        height: 140,
+        borderWidth: 2
+      };
+
+      //draw(myRectangle, context);
+      //animate(myRectangle, canvas, context, 1000);
+      // wait one second before starting animation
+
+      setTimeout(function() {
+        var startTime = (new Date()).getTime();
+        animate(myRectangle, canvas, context, startTime);
+      }, 1000);
+
+      
+    </script>
+
+
+    
+    <h2 style="font-style:italic;">a collaborative music generation interface made at mhacks iv</h2>
+
+    <h2>click on the staff to add or remove a note</h2>
+    made by: berwin xie, mohammad saad, rufei zhou, yosub shin
+    <br>
+    <a id="right-panel-link" href="#right-panel">chat</a>
+</div>
+</div>
+
+<div id="right-panel" class="panel">
+  <div>
+    <h4>Chat</h4>
+    <input type='text' id='nameInput' placeholder='Name'>
+    <input type='text' id='messageInput' placeholder='Message'>
+        <script>
+            var myDataRef = new Firebase('https://musicmaking.firebaseio.com/chat');
+            $('#messageInput').keypress(function (e) {
+            if (e.keyCode == 13) {
+                var name = $('#nameInput').val();
+                var text = $('#messageInput').val();
+                myDataRef.push({name: name, text: text});
+                $('#messageInput').val('');
+            }
+          });
+            myDataRef.on('child_added', function(snapshot) {
+            var message = snapshot.val();
+            displayChatMessage(message.name, message.text);
+            });
+            function displayChatMessage(name, text) {
+            $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+            $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+            };
+        </script>
+        <div id='messagesDiv'></div>
+    
+  </div>
+</div>
+<!--<script src="jquery-1.11.1.min.js"></script>-->
+<script src="jquery.panelslider.min.js"></script>
+
+<script>
+    $('#right-panel-link').panelslider({side:'right'});
+
+    $('#close-panel-bt').click(function() {
+      $.panelslider.close();
+    });
+</script>
+</body>
+</html>
