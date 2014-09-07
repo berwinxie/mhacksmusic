@@ -32,12 +32,14 @@
   2D array 'notes' is the most important. it is what will be used for playing the sounds
   -->
   <canvas id="myCanvas" width="800" height="200"></canvas>
+  <script type="text/javascript" src="audiosynth.js"></script>
+  <script type="text/javascript" src="synthesizer.js"></script>
     <script>
 
     var ref = new Firebase('https://musicmaking.firebaseio.com/');
     //20 across
     var heightSize = 15;
-    var widthSize = 50;
+    var widthSize = 40;
     var notes = new Array(widthSize);
     
     for (var i = 0; i < widthSize; i++) {
@@ -74,7 +76,7 @@
     newRef.on('child_added', function(snap) 
     {
       var newNote = snap.val();
-      console.log(JSON.stringify(newNote));
+      // console.log(JSON.stringify(newNote));
       notes[newNote.x][newNote.y] = newNote.exists;
       });
     
@@ -170,6 +172,10 @@
         context.stroke();
       } 
 
+      var isPlayed = false;
+      var curI = 0;
+      var i = 0;
+      var prevMyRectangleX = 0;
       function animate(myline, canvas, context, startTime) {
         // update
         var time = (new Date()).getTime() - startTime;
@@ -182,7 +188,28 @@
           myRectangle.x = 0;
         }
         */
+
         myRectangle.x = newX%800;
+        if (myRectangle.x < prevMyRectangleX) {
+          i = 0;
+          isPlayed = false;
+        }
+
+        prevMyRectangleX = myRectangle.x;
+
+
+        if (!isPlayed && myRectangle.x / 20 > i) {
+          i = Math.floor(myRectangle.x / 20);  
+          console.log('Should make a sound! i=' + i);
+          var beatNote = boolArrayToNoteArray(notes[i]);
+          playNotes('bassDrum', beatNote);
+
+          isPlayed = true;
+        }
+
+        if (myRectangle.x / 20 > i - 1) {
+          isPlayed = false;
+        }
         
 
 
@@ -191,10 +218,14 @@
 
         draw(myRectangle, context);
 
-        // request new frame
-        requestAnimFrame(function() {
+        //request new frame
+        // requestAnimFrame(function() {
+        //   animate(myRectangle, canvas, context, startTime);
+        // });
+        setTimeout(function() {
           animate(myRectangle, canvas, context, startTime);
-        });
+        }, 500);
+
       }
 
 
@@ -251,7 +282,7 @@
 
       //this is the bar that moves
       var myRectangle = {
-        x: 0,
+        x: -30,
         y: 20,
         width: 1,
         height: 140,
@@ -264,7 +295,7 @@
 
       setTimeout(function() {
         var startTime = (new Date()).getTime();
-        animate(myRectangle, canvas, context, startTime);
+        // animate(myRectangle, canvas, context, startTime);
       }, 1000);
 
       
