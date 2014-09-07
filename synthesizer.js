@@ -277,17 +277,23 @@ function playNotes(instrumentName, notes, beatIndex) {
 }
 
 var noteOffset = 29;
-var noteLetters = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B',];
+var noteLetters = ['D', 'E', 'F', 'G', 'A', 'B', 'C',];
 
 function boolArrayToNoteArray(arr) {
     var result = [];
     var len = arr.length;
     for (var i = 0; i < len; i++) {
         if (arr[i] === true) {
+
             var inverseOffset = noteOffset - i;
             var octave = inverseOffset / noteLetters.length + 1;
             var noteNum = inverseOffset % noteLetters.length;
             var noteLetter = noteLetters[noteNum];
+            if (noteLetter === 'C') {
+                // Cover corner case where C was played one octave lower
+                octave = octave + 1;
+            }
+            console.log('octave=' + octave + ', noteLetter=' + noteLetter);
             result.push([noteLetter, octave]);
         }
     }
