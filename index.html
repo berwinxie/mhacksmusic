@@ -1,4 +1,3 @@
-
 <html>
 <head>
 <title>mhacks music</title>
@@ -19,10 +18,7 @@
 <body>
 <div id="page">
 <div id="wrapper" style="display:none;">
-  <h1><img src="http://mhacks.org/img/mhacks_frame.png" height="57"/>HACKS MUSIC</h1>
-
-
-  
+  <h1><img src="http://mhacks.org/img/mhacks_frame.png" height="57"/>HACKS MUS<a href="http://i.imgur.com/TDrobjP.jpg" target="_blank">I</a>C</h1>  
   <!--
   canvas will have 5 staff lines
   11 note or more, 
@@ -215,13 +211,8 @@
 
         // clear
         context.clearRect(0, 0, canvas.width, canvas.height);
-
         draw(myRectangle, context);
 
-        //request new frame
-        // requestAnimFrame(function() {
-        //   animate(myRectangle, canvas, context, startTime);
-        // });
         setTimeout(function() {
           animate(myRectangle, canvas, context, startTime);
         }, 500);
@@ -272,10 +263,10 @@
         var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
         console.log(mousePos.x);
         console.log(mousePos.y);
-        findnearest(canvas, mousePos);
-        //writeMessage(canvas, message);
-        
+        findnearest(canvas, mousePos);        
   });
+
+
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
 
@@ -289,13 +280,9 @@
         borderWidth: 2
       };
 
-      //draw(myRectangle, context);
-      //animate(myRectangle, canvas, context, 1000);
-      // wait one second before starting animation
-
+      //wait one second to load before starting (fade in)
       setTimeout(function() {
         var startTime = (new Date()).getTime();
-        // animate(myRectangle, canvas, context, startTime);
       }, 1000);
 
       
@@ -312,6 +299,8 @@
 </div>
 </div>
 
+
+<!-- the chat room side bar -->
 <div id="right-panel" class="panel">
   <div>
     <h4>Chat</h4>
