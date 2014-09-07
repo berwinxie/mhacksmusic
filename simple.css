@@ -20,6 +20,16 @@ h2{
 
 }
 
+a{
+	color: grey;
+	text-decoration: none;
+}
+
+a:visited{
+	color: grey;
+	text-decoration: none;
+}
+
 .panel {
       display: none;
       width: 220px;
