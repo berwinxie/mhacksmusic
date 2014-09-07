@@ -214,7 +214,8 @@ $(function() {
     instrumentDurations.hatClosed = 0.05;
 
     loopHandle = loop();
-    loopHandle.instruments['bassDrum'] = '';
+    loopHandle.instruments['piano'] = '';
+    // loopHandle.instruments['bassDrum'] = '';
 });
 
 var bpm = 240;
@@ -258,9 +259,19 @@ function playNotes(instrumentName, notes, beatIndex) {
     var len = beatNotes.length;
     for (var i = 0; i < len; i++) {
         var beatNote = beatNotes[i];
+        if ((notes[beatIndex][0] || notes[beatIndex][1]) && i == 0) {
+            instrument = instruments['bassDrum'];
+            duration = instrumentDurations['bassDrum'];
+        } else {
+            instrument = instruments[instrumentName];
+            duration = instrumentDurations[instrumentName];
+        }
         beatNote.push(duration);
-        var func = instrument.play;
-        func.apply(instrument, beatNote);
+        (function(instrument) {
+            var func = instrument.play;
+            func.apply(instrument, beatNote);
+        })(instrument);
+        
     }
     
 }
