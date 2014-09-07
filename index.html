@@ -120,6 +120,12 @@
       function drawstaff(){
         context.beginPath();
         context.strokeStyle = 'grey';
+        context.moveTo(0, 0);
+        context.lineTo(800, 0);
+        context.stroke();
+
+        context.beginPath();
+        context.strokeStyle = 'grey';
         context.moveTo(0, 50);
         context.lineTo(800, 50);
         context.stroke();
@@ -274,7 +280,7 @@
       //this is the bar that moves
       var myRectangle = {
         x: -30,
-        y: 20,
+        y: 0,
         width: 1,
         height: 140,
         borderWidth: 2
@@ -293,6 +299,7 @@
     <h2 style="font-style:italic;">a collaborative music generation interface made at mhacks iv</h2>
 
     <h2>click on the staff to add or remove a note</h2>
+    <h2>the top row is the percussion beat</h2>
     made by: berwin xie, mohammad saad, rufei zhou, yosub shin
     <br>
     <a id="right-panel-link" href="#right-panel">chat</a>
