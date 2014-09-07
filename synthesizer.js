@@ -202,7 +202,7 @@ $(function() {
     instrumentDurations.piano = 2;
 
     instruments.edm = Synth.createInstrument('edm');
-    instrumentDurations.edm = 0.2;
+    instrumentDurations.edm = 0.5;
 
     instruments.bassDrum = Synth.createInstrument('bassDrum');
     instrumentDurations.bassDrum = 0.1;
@@ -260,6 +260,9 @@ function playNotes(instrumentName, notes, beatIndex) {
     for (var i = 0; i < len; i++) {
         var beatNote = beatNotes[i];
         if ((notes[beatIndex][0] || notes[beatIndex][1]) && i == 0) {
+            instrument = instruments['hatOpen'];
+            duration = instrumentDurations['hatOpen'];
+        } else if (notes[beatIndex][19] && i == len - 1) {
             instrument = instruments['bassDrum'];
             duration = instrumentDurations['bassDrum'];
         } else {
