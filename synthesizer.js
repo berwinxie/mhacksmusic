@@ -202,7 +202,7 @@ $(function() {
     instrumentDurations.piano = 2;
 
     instruments.edm = Synth.createInstrument('edm');
-    instrumentDurations.edm = 0.2;
+    instrumentDurations.edm = 0.5;
 
     instruments.bassDrum = Synth.createInstrument('bassDrum');
     instrumentDurations.bassDrum = 0.1;
@@ -260,6 +260,9 @@ function playNotes(instrumentName, notes, beatIndex) {
     for (var i = 0; i < len; i++) {
         var beatNote = beatNotes[i];
         if ((notes[beatIndex][0] || notes[beatIndex][1]) && i == 0) {
+            instrument = instruments['hatOpen'];
+            duration = instrumentDurations['hatOpen'];
+        } else if (notes[beatIndex][19] && i == len - 1) {
             instrument = instruments['bassDrum'];
             duration = instrumentDurations['bassDrum'];
         } else {
@@ -277,17 +280,23 @@ function playNotes(instrumentName, notes, beatIndex) {
 }
 
 var noteOffset = 29;
-var noteLetters = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B',];
+var noteLetters = ['D', 'E', 'F', 'G', 'A', 'B', 'C',];
 
 function boolArrayToNoteArray(arr) {
     var result = [];
     var len = arr.length;
     for (var i = 0; i < len; i++) {
         if (arr[i] === true) {
+
             var inverseOffset = noteOffset - i;
             var octave = inverseOffset / noteLetters.length + 1;
             var noteNum = inverseOffset % noteLetters.length;
             var noteLetter = noteLetters[noteNum];
+            if (noteLetter === 'C') {
+                // Cover corner case where C was played one octave lower
+                octave = octave + 1;
+            }
+            console.log('octave=' + octave + ', noteLetter=' + noteLetter);
             result.push([noteLetter, octave]);
         }
     }
