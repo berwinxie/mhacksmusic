@@ -258,6 +258,9 @@ function playNotes(instrumentName, notes) {
         console.log('i = ' +  i);
         var note = notes[i];
         note.push(duration);
+        if (i == 0) {
+            instrument = instruments['bassDrum'];
+        }
         var func = instrument.play;
         func.apply(instrument, note);
     }
