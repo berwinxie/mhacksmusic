@@ -193,6 +193,8 @@ generateAudioSamples();
 var instruments = {};
 var instrumentDurations = {};
 
+var loopHandle;
+
 $(function() {
     Synth.setSampleRate(sampleRate);
 
@@ -211,55 +213,57 @@ $(function() {
     instruments.hatClosed = Synth.createInstrument('hatClosed');
     instrumentDurations.hatClosed = 0.05;
 
-    //var edmLoop = loop('edm', edmNotes);
-    var bassDrumLoop = loop('piano', notes);
+    loopHandle = loop();
+    loopHandle.instruments['bassDrum'] = '';
 });
 
 var bpm = 240;
 
-function loop(instrumentName, notes) {
+function loop() {
     var beatIndex = 0;
-    var loopHandle = {
-        name: instrumentName,
-        shouldContinue: true
-    }
+    var result = {};
+    var instruments = {};
+    result.instruments = instruments;
 
     var closure = function() {
-        var beatNote = boolArrayToNoteArray(notes[beatIndex]);
-        playNotes(instrumentName, beatNote);
+        for (instrumentName in instruments) {
+            (function(instrumentName) {
+                // TODO You need to have notes -> instrumentName -> and then 2d array
+                // playNotes(instrumentName, notes[instrumentName], beatIndex);
+                console.log('Play for instrument : ', instrumentName);
+                playNotes(instrumentName, notes, beatIndex);
+            })(instrumentName);
+        }
 
         myRectangle.x = myRectangle.x + 20;
         if (myRectangle.x > 800) {
             myRectangle.x = myRectangle.x % 800;
         }
-
         // clear
         context.clearRect(0, 0, canvas.width, canvas.height);
-
         draw(myRectangle, context);
 
         beatIndex = (beatIndex + 1) % notes.length;
-        if (loopHandle.shouldContinue) {
-            setTimeout(function() {
-                closure();
-            }, 60 / bpm * 1000);
-        }
+        setTimeout(function() {
+            closure();
+        }, 60 / bpm * 1000);
     }
     closure();
-    return loopHandle;
+    return result;
 }
 
-function playNotes(instrumentName, notes) {
-    //console.log('Plyaing notes for ' + instrumentName + ' with notes : ' + JSON.stringify(notes));
+function playNotes(instrumentName, notes, beatIndex) {
+    console.log('beatIndex=', beatIndex);
+    var beatNotes = boolArrayToNoteArray(notes[beatIndex]);
     var instrument = instruments[instrumentName];
     var duration = instrumentDurations[instrumentName];
-    var len = notes.length;
+    var len = beatNotes.length;
     for (var i = 0; i < len; i++) {
         console.log('i = ' +  i);
-        var note = notes[i];
-        note.push(duration);
+        var beatNote = beatNotes[i];
+        beatNote.push(duration);
         var func = instrument.play;
-        func.apply(instrument, note);
+        func.apply(instrument, beatNote);
     }
     
 }
