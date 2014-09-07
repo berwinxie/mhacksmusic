@@ -31,7 +31,7 @@
 
   2D array 'notes' is the most important. it is what will be used for playing the sounds
   -->
-  <canvas id="myCanvas" width="800" height="200"></canvas>
+  <canvas id="myCanvas" width="800" height="180"></canvas>
   <script type="text/javascript" src="audiosynth.js"></script>
   <script type="text/javascript" src="synthesizer.js"></script>
     <script>
@@ -122,6 +122,18 @@
       }
 
       function drawstaff(){
+        context.beginPath();
+        context.strokeStyle = 'green';
+        context.moveTo(0, 0);
+        context.lineTo(800, 0);
+        context.stroke();
+
+        context.beginPath();
+        context.strokeStyle = 'green';
+        context.moveTo(0, 180);
+        context.lineTo(800, 180);
+        context.stroke();
+
         context.beginPath();
         context.strokeStyle = 'grey';
         context.moveTo(0, 50);
@@ -283,9 +295,9 @@
       //this is the bar that moves
       var myRectangle = {
         x: -30,
-        y: 20,
+        y: 0,
         width: 1,
-        height: 140,
+        height: 180,
         borderWidth: 2
       };
 
@@ -303,9 +315,10 @@
 
 
     
-    <h2 style="font-style:italic;">a collaborative music generation interface made at mhacks iv</h2>
+    <h2 style="font-style:italic; font-size: 17px">a collaborative music generation interface made at mhacks iv</h2>
 
     <h2>click on the staff to add or remove a note</h2>
+    <h2>top bar is for high snare | low bar is for bass drum</h2>
     made by: berwin xie, mohammad saad, rufei zhou, yosub shin
     <br>
     <a id="right-panel-link" href="#right-panel">chat</a>
