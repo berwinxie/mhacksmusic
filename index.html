@@ -18,7 +18,10 @@
 <body>
 <div id="page">
 <div id="wrapper" style="display:none;">
-  <h1><img src="http://mhacks.org/img/mhacks_frame.png" height="57"/>HACKS MUS<a href="http://i.imgur.com/TDrobjP.jpg" target="_blank">I</a>C</h1>  
+  <h1><img src="http://mhacks.org/img/mhacks_frame.png" height="57"/>HACKS MUSIC</h1>
+
+
+  
   <!--
   canvas will have 5 staff lines
   11 note or more, 
@@ -27,14 +30,14 @@
 
   2D array 'notes' is the most important. it is what will be used for playing the sounds
   -->
-  <canvas id="myCanvas" width="800" height="200"></canvas>
+  <canvas id="myCanvas" width="800" height="180"></canvas>
   <script type="text/javascript" src="audiosynth.js"></script>
   <script type="text/javascript" src="synthesizer.js"></script>
     <script>
 
     var ref = new Firebase('https://musicmaking.firebaseio.com/');
     //20 across
-    var heightSize = 15;
+    var heightSize = 20;
     var widthSize = 40;
     var notes = new Array(widthSize);
     
@@ -119,9 +122,15 @@
 
       function drawstaff(){
         context.beginPath();
-        context.strokeStyle = 'grey';
+        context.strokeStyle = 'green';
         context.moveTo(0, 0);
         context.lineTo(800, 0);
+        context.stroke();
+
+        context.beginPath();
+        context.strokeStyle = 'green';
+        context.moveTo(0, 180);
+        context.lineTo(800, 180);
         context.stroke();
 
         context.beginPath();
@@ -217,8 +226,13 @@
 
         // clear
         context.clearRect(0, 0, canvas.width, canvas.height);
+
         draw(myRectangle, context);
 
+        //request new frame
+        // requestAnimFrame(function() {
+        //   animate(myRectangle, canvas, context, startTime);
+        // });
         setTimeout(function() {
           animate(myRectangle, canvas, context, startTime);
         }, 500);
@@ -269,10 +283,10 @@
         var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
         console.log(mousePos.x);
         console.log(mousePos.y);
-        findnearest(canvas, mousePos);        
+        findnearest(canvas, mousePos);
+        //writeMessage(canvas, message);
+        
   });
-
-
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
 
@@ -282,13 +296,17 @@
         x: -30,
         y: 0,
         width: 1,
-        height: 140,
+        height: 180,
         borderWidth: 2
       };
 
-      //wait one second to load before starting (fade in)
+      //draw(myRectangle, context);
+      //animate(myRectangle, canvas, context, 1000);
+      // wait one second before starting animation
+
       setTimeout(function() {
         var startTime = (new Date()).getTime();
+        // animate(myRectangle, canvas, context, startTime);
       }, 1000);
 
       
@@ -296,18 +314,16 @@
 
 
     
-    <h2 style="font-style:italic;">a collaborative music generation interface made at mhacks iv</h2>
+    <h2 style="font-style:italic; font-size: 17px">a collaborative music generation interface made at mhacks iv</h2>
 
     <h2>click on the staff to add or remove a note</h2>
-    <h2>the top row is the percussion beat</h2>
+    <h2>top bar is for high snare | low bar is for bass drum</h2>
     made by: berwin xie, mohammad saad, rufei zhou, yosub shin
     <br>
     <a id="right-panel-link" href="#right-panel">chat</a>
 </div>
 </div>
 
-
-<!-- the chat room side bar -->
 <div id="right-panel" class="panel">
   <div>
     <h4>Chat</h4>
