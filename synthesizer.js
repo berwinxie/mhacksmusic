@@ -230,7 +230,6 @@ function loop() {
             (function(instrumentName) {
                 // TODO You need to have notes -> instrumentName -> and then 2d array
                 // playNotes(instrumentName, notes[instrumentName], beatIndex);
-                console.log('Play for instrument : ', instrumentName);
                 playNotes(instrumentName, notes, beatIndex);
             })(instrumentName);
         }
@@ -253,13 +252,11 @@ function loop() {
 }
 
 function playNotes(instrumentName, notes, beatIndex) {
-    console.log('beatIndex=', beatIndex);
     var beatNotes = boolArrayToNoteArray(notes[beatIndex]);
     var instrument = instruments[instrumentName];
     var duration = instrumentDurations[instrumentName];
     var len = beatNotes.length;
     for (var i = 0; i < len; i++) {
-        console.log('i = ' +  i);
         var beatNote = beatNotes[i];
         beatNote.push(duration);
         var func = instrument.play;
